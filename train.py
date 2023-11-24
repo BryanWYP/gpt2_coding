@@ -24,15 +24,15 @@ if __name__ == '__main__':
                         help='dataset name whatever name you put into the ./dataset directory (by default: source_code)')
     parser.add_argument('--per_gpu_train_batch_size', type=int, default=4,
                         help='input batch size for training')
-    parser.add_argument('--dev_batch_size', type=int, default=8,
+    parser.add_argument('--dev_batch_size', type=int, default=8,    # 训练时的batch_size
                         help='input batch size for development')
-    parser.add_argument('--num_epochs_train', type=int, default=16,
+    parser.add_argument('--num_epochs_train', type=int, default=4, # 训练轮数
                         help='number of epochs to train')
-    parser.add_argument('--max_seq_length', type=int, default=256,
+    parser.add_argument('--max_seq_length', type=int, default=256,  # 每个样本的最大长度
                         help='maximum sequence length of samples in a batch for training')
-    parser.add_argument('--lr', type=float, default=2e-5,
+    parser.add_argument('--lr', type=float, default=2e-5,           # 学习率
                         help='learning rate')
-    parser.add_argument('--warmup_ratio', type=float, default=0.2,
+    parser.add_argument('--warmup_ratio', type=float, default=0.2,  # warmup比例
                         help='warmup_ratio')
     parser.add_argument('--early_stop', type=int, default=20,
                         help='early_stop')
@@ -46,7 +46,7 @@ if __name__ == '__main__':
                         help='number of gpu for training')
     parser.add_argument('--visiable_device', type=str, default="0",
                         help='visiable gpus for training, should be consistent with n_gpu')
-    parser.add_argument('--evaluation_steps', type=int, default=200,
+    parser.add_argument('--evaluation_steps', type=int, default=500,    # 每隔多少步进行一次验证
                         help='evaluation_steps')
     parser.add_argument('--wandb_project_name', type=str, default="code_generate",
                         help='project name for wandb')
@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     logger.info(f"args: {args}")
-    dataset_folder = f"dataset/{args.dataset_name}/json/"
+    dataset_folder = f"./{args.dataset_name}/"
     assert args.model_select in MODEL_MAP.keys(), (f"model has to be in {MODEL_MAP.keys()}")
     output_path = f"model/{args.model_select}_fine_tuned_coder"
     logger.info("{} for dataset in: {}".format(output_path, dataset_folder))
@@ -88,7 +88,7 @@ if __name__ == '__main__':
                                  epochs=args.num_epochs_train,
                                  per_gpu_train_batch_size=args.per_gpu_train_batch_size,
                                  output_path=output_path,
-                                 optimizer_params={'lr': args.lr, 'eps': 1e-6, 'correct_bias': False},
+                                 optimizer_params={'lr': args.lr, 'eps': 1e-6, 'correct_bias': False},  # AdamW optimizer
                                  evaluation_steps=args.evaluation_steps,
                                  early_stop=args.early_stop,
                                  dev_batch_size=args.dev_batch_size,
